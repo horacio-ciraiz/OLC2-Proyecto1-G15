@@ -49,9 +49,7 @@ BSL                                 "\\".
 "("                         return 'lparen';
 ")"                         return 'rparen';
 
-"&&"                        return 'and';
-"||"                        return 'or';
-"!"                         return 'not';
+
 
 /* Number literals */
 (([0-9]+"."[0-9]*)|("."[0-9]+))     return 'DoubleLiteral';
