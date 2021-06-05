@@ -21,7 +21,7 @@ BSL                                 "\\".
 <comment>"*/"                       this.popState();
 <comment>.                          /* skip comment content*/
 \s+                                 /* skip whitespace */
-
+//palabra reservada alejandro-------------------------------
 "print"                     return 'print';
 "null"                      return 'null';
 "true"                      return 'true';
@@ -59,11 +59,40 @@ BSL                                 "\\".
 "preceding-sibling"         return 'preceding_sibling';
 "preceding"                 return 'preceding';
 "ancestor-or-self"          return 'ancestor_or_self';
+//palabra reservada Horacio ------------------
 
+"return"                    return 'return_';
+"for"                       return 'for_';
+"in"                        return 'in_';
+"let"                       return 'let_';
+"some"                      return 'some_';
+"every"                     return 'every_';
+"in"                        return 'in_';          
+"satisfies"                 return 'satisfies_';      
+"if"                        return 'if_';
+"then"                      return 'then_';
+"else"                      return 'else_';
+"or"                        return 'or_';
+"and"                       return 'and_';
+"to"                        return 'to_';
+"div"                       return 'div_';
+"idiv"                      return 'idiv_';
+"mod"                       return 'mod_';
+"union"                     return 'union_';
+"intersect"                 return 'intersec_';
+"except"                    return 'except_';
+"instance"                  return 'instance_';
+"of"                        return 'of_';
+"treat"                     return 'treat_';
+"cast"                      return 'cast_'
+"castable"                  return 'castable_'
+//Simbolo Horacio -------------------------
 
-
-
-
+":="                        return 'dospigual';
+"/\/"                       return 'ddiagonal'
+"|"                         return 'simpleor'
+"=>"                        return 'igualmayor'
+//simbolos alejandro --------------------------
 "+"                         return 'mas';
 "-"                         return 'menos';
 "*"                         return 'mul';
@@ -154,61 +183,248 @@ XPATH:EXPR;
 
 PARAMLIST: PARAM (coma PARAM)*;
 
-PARAM: dolar EQNAME TYPEDECLARATION;
+PARAM: dolar EQNAME TYPEDECLARATION?;
 
-FUNCTIONBODY:;
+FUNCTIONBODY:ENCLOSEDEXPR;
 
-ENCLOSEDEXPR:;
+ENCLOSEDEXPR: lllave EXPR rllave 
+        | llave rllave;
 
-EXPR:;
+EXPR:EXPRSINGLE EXPRL1
+        |EXPRSINGLE;
 
-EXPRSINGLE:;
+EXPRL1: EXPRL1 EXPRL2  
+        |EXPRL2
+        ;
+EXPRL2:coma EXPRSINGLE;
 
-FOREXPR:;
+EXPRSINGLE: FOREXPR
+            |LETEXPR
+            |QUANTIFIEDEXPR
+            |IFEXPR
+            |OREXPR;
 
-SIMPLEFORCLAUSE:;
+FOREXPR:SIMPLEFORCLAUSE return_ EXPRSINGLE;
 
-SIMPLEFORBINDING:;
+SIMPLEFORCLAUSE: for_ SIMPLEFORBINDING SIMPLEFORCLAUSEL1
+                |for_ SIMPLEFORBINDING;
 
-LETEXPR:;
+SIMPLEFORCLAUSEL1: SIMPLEFORCLAUSEL1 SIMPLEFORCLAUSEL2
+                |SIMPLEFORCLAUSEL2
+;
+SIMPLEFORCLAUSEL2: coma SIMPLEFORBINDING
+;
 
-SIMPLELETCLAUSE:;
+SIMPLEFORBINDING: dolar VARNAME in_ EXPRSINGLE;
 
-SIMPLELETBINDING:;
+LETEXPR:SIMPLELETCLAUSE return_ EXPRSINGLE;
 
-QUANTIFIEDEXPR:;
+SIMPLELETCLAUSE: let_ SIMPLELETBINDING SIMPLELETCLAUSEL1
+                |let_ SIMPLELETBINDING ;
 
-IFEXPR:;
+SIMPLELETCLAUSEL1: SIMPLELETCLAUSEL1 SIMPLELETCLAUSEL2
+                | SIMPLELETCLAUSEL2
+                ;
 
-OREXPR:;
+SIMPLELETCLAUSEL2: coma SIMPLEFORBINDING;
 
-ANDEXPR:;
+SIMPLELETBINDING:dolar VARNAME dospigual EXPRSINGLE;
 
-COMPARISONEXPR:;
+QUANTIFIEDEXPR:QUANTIFIEDEXPRVAR dolar VARNAME in EXPRSINGLE QUANTIFIEDEXPRL1 satisfies_ EXPRSINGLE
+                |QUANTIFIEDEXPRVAR dolar VARNAME in EXPRSINGLE satisfies_ EXPRSINGLE
 
-STRINGCONCATEXPR:;
+                ;
 
-RANGEEXPR:;
+QUANTIFIEDEXPRVAR:some_
+                |every_
+                ;
+QUANTIFIEDEXPRL1:QUANTIFIEDEXPRL1 QUANTIFIEDEXPRL2
+                |QUANTIFIEDEXPRL2
+                ;
+QUANTIFIEDEXPRL2:coma dolar VARNAME in EXPRSINGLE;
 
-ADDITIVEEXPR:;
 
-MULTIPLICATIVEEXPR:;
 
-UNIONEXPR:;
 
-INTERSECTEXCEPTEXPR:;
 
-INSTANCEOFEXPR:;
 
-TREATEXPR:;
+IFEXPR: if_ lparen EXPR rparen then_ EXPRSINGLE else_ EXPRSINGLE;
 
-CASTABLEEXPR:;
+OREXPR: ANDEXPR OREXPRL1
+        |ANDEXPR;
 
-CASTEXPR:;
+OREXPRL1: OREXPRL1 OREXPRL2
+        |OREXPRL2;
 
-ARROWEXPR:;
+OREXPRL2: or_ ANDEXPR
+;
 
-UNARYEXPR:;
+
+
+
+
+ANDEXPR:COMPARISONEXPR ANDEXPRL1
+        |COMPARISONEXPR;
+
+ANDEXPRL1: ANDEXPRL1 ANDEXPRL2
+        |ANDEXPRL2
+        ;
+
+ANDEXPRL2:and_ COMPARISONEXPR
+;
+
+
+
+COMPARISONEXPR:STRINGCONCATEXPR COMPARISONERXPRVAR STRINGCONCATEXPR
+                |STRINGCONCATEXPR;
+
+COMPARISONERXPRVAR:VALUECOMP
+                |GENERALCOMP
+                |NODECOMP;
+
+
+
+
+
+
+
+STRINGCONCATEXPR:RANGEEXPR STRINGCONCATEXPRL1
+                |RANGEEXPR ;
+
+STRINGCONCATEXPRL1: STRINGCONCATEXPRL1 STRINGCONCATEXPRL2
+                | STRINGCONCATEXPRL2
+                ;
+
+STRINGCONCATEXPRL2: or_ RANGEEXPR;
+
+
+
+
+
+
+RANGEEXPR: ADDITIVEEXPR to_ ADDITIVEEXPR
+        |ADDITIVEEXPR;
+
+
+
+
+
+
+ADDITIVEEXPR: MULTIPLICATIVEEXPR ADDITIVEEXPRL1 
+                |MULTIPLICATIVEEXPR
+                ;
+
+ADDITIVEEXPRVAR:mas 
+                |menos
+                ;
+
+ADDITIVEEXPRL1: ADDITIVEEXPRL1 ADDITIVEEXPRL2
+                |ADDITIVEEXPRL2;
+
+ADDITIVEEXPRL2: ADDITIVEEXPRVAR MULTIPLICATIVEEXPR
+                ;
+
+
+
+
+
+
+MULTIPLICATIVEEXPR:UNIONEXPR MULTIPLICATIVEEXPRL1
+                UNIONEXPR
+;
+
+MULTIPLICATIVEEXPRVAR: mul   
+                        |div_
+                        |idiv_
+                        |mod_
+                        ;
+
+MULTIPLICATIVEEXPRL1: MULTIPLICATIVEEXPRL1 MULTIPLICATIVEEXPRL2
+                        |MULTIPLICATIVEEXPRL2
+                        ;
+
+MULTIPLICATIVEEXPRL2:MULTIPLICATIVEEXPRVAR UNIONEXPR
+                        ;
+
+
+
+
+
+
+
+UNIONEXPR:INTERSECTEXCEPTEXPR UNIONEXPRL1
+        |INTERSECTEXCEPTEXPR;
+
+
+UNIONEXPRVAR:union_
+        |simpleor;
+
+UNIONEXPRL1: UNIONEXPRL1 UNIONEXPRL2
+        |UNIONEXPRL2;
+
+UNIONEXPRL2: UNIONEXPRVAR INTERSECTEXCEPTEXPR;
+
+
+
+
+
+INTERSECTEXCEPTEXPR:INSTANCEOFEXPR INTERSECTEXCEPTEXPRL1
+                |INSTANCEOFEXPR
+                 ;
+
+INTERSECTEXCEPTEXPRVAR:intersec_
+                        |except_;
+                        ;
+
+INTERSECTEXCEPTEXPRL1: INTERSECTEXCEPTEXPRL1 INTERSECTEXCEPTEXPRL2
+                |INTERSECTEXCEPTEXPRL2;                        
+
+INTERSECTEXCEPTEXPRL2:  INTERSECTEXCEPTEXPRVAR INSTANCEOFEXPR
+                        ;
+
+
+
+
+
+INSTANCEOFEXPR:TREATEXPR instance_ of_ SEQUENCETYPE
+                |TREATEXPR ;
+
+TREATEXPR:CASTABLEEXPR treat_ as SEQUENCETYPE
+        |:CASTABLEEXPR;
+
+CASTABLEEXPR:CASTEXPR castable as SINGLETYPE
+                |CASTEXPR
+                ;
+
+CASTEXPR: ARROWEXPR cast_ as SINGLETYPE
+        |ARROWEXPR
+        ;
+
+
+
+
+ARROWEXPR: UNARYEXPR ARROWEXPRL1;
+
+ARROWEXPRL1: ARROWEXPRL1 ARROWEXPRL2
+        |ARROWEXPRL2;
+
+ARROWEXPRL2:igualmayor ARROWFUNCTIONSPECIFIER ARGUMENTLIST
+        ;
+
+UNARYEXPR: UNARYEXPRL1 VALUEEXPR
+        |VALUEEXPR;
+
+UNARYEXPRL1: UNARYEXPRL1 UNARYEXPRL2
+        |UNARYEXPRL2
+        ;
+
+UNARYEXPRL2:menos
+        |mas
+        ;
+
+
+
+
 //------------------- AQUI INICIO
 VALUEEXPR:SIMPLEMAPEXPR;
 
