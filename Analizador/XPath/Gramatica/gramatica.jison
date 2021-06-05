@@ -27,9 +27,28 @@ BSL                                 "\\".
 "true"                      return 'true';
 "false"                     return 'false';
 
-"+"                         return 'plus';
-"-"                         return 'minus';
-"*"                         return 'times';
+"function"                  return 'function';
+"as"                        return 'as';
+"map"                       return 'map';
+"array"                     return 'array';
+"empty-sequence"            return 'empty_sequence';
+"item"                      return 'item';
+"node"                      return 'node';
+"document-node"             return 'document_node';
+"text"                      return 'text';
+"comment"                   return 'comment';
+"namespace-node"            return 'namespace_node';
+"processing-instruction"    return 'processing_instruction';
+"attribute"                 return 'attribute';
+"schema-attribute"          return 'schema_attribute';
+"element"                   return 'element';
+"schema-element"            return 'schema_element';
+
+
+"+"                         return 'mas';
+"-"                         return 'menos';
+"*"                         return 'mul';
+
 "/"                         return 'div';
 "%"                         return 'mod';
 
@@ -45,9 +64,21 @@ BSL                                 "\\".
 "||"                        return 'or';
 "!"                         return 'not';
 
-";"                         return 'semicolon';
 "("                         return 'lparen';
 ")"                         return 'rparen';
+
+","                         return 'coma';
+"."                         return 'punto';
+";"                         return 'puntocoma';
+"?"                         return 'rinterrogacion';
+"#"                         return 'numeral';
+":"                         return 'dospuntos';
+"["                         return 'lcorchete';
+"]"                         return 'rcorchete';
+"{"                         return 'lllave';
+"}"                         return 'rllave';
+
+
 
 
 
@@ -94,8 +125,276 @@ BSL                                 "\\".
 /* Definición de la gramática */
 START : RAICES EOF         
     ;
+XPATH:;
 
-    RAICES:
+PARAMLIST:;
+
+PARAM:;
+
+FUNCTIONBODY:;
+
+ENCLOSEDEXPR:;
+
+EXPR:;
+
+EXPRSINGLE:;
+
+FOREXPR:;
+
+SIMPLEFORCLAUSE:;
+
+SIMPLEFORBINDING:;
+
+LETEXPR:;
+
+SIMPLELETCLAUSE:;
+
+SIMPLELETBINDING:;
+
+QUANTIFIEDEXPR:;
+
+IFEXPR:;
+
+OREXPR:;
+
+ANDEXPR:;
+
+COMPARISONEXPR:;
+
+STRINGCONCATEXPR:;
+
+RANGEEXPR:;
+
+ADDITIVEEXPR:;
+
+MULTIPLICATIVEEXPR:;
+
+UNIONEXPR:;
+
+INTERSECTEXCEPTEXPR:;
+
+INSTANCEOFEXPR:;
+
+TREATEXPR:;
+
+CASTABLEEXPR:;
+
+CASTEXPR:;
+
+ARROWEXPR:;
+
+UNARYEXPR:;
+
+VALUEEXPR:;
+
+GENERALCOMP:;
+
+VALUECOMP:;
+
+NODECOMP:;
+
+SIMPLEMAPEXPR:;
+
+PATHEXPR:;
+
+RELATIVEPATHEXPR:;
+
+STEPEXPR:;
+
+AXISSTEP:;
+
+FORWARDSTEP:;
+
+FORWARDAXIS:;
+
+ABBREVFORWARDSTEP:;
+
+REVERSESTEP:;
+
+REVERSEAXIS:;
+
+ABBREVREVERSESTEP:;
+
+NODETEST:;
+
+NAMETEST:;
+
+WILDCARD:;
+
+POSTFIXEXPR:;
+
+ARGUMENTLIST:;
+
+PREDICATELIST:;
+
+PREDICATE:;
+
+LOOKUP:;
+
+KEYSPECIFIER:;
+
+ARROWFUNCTIONSPECIFIER:;
+
+PRIMARYEXPR:;
+
+LITERAL:;
+
+NUMERICLITERAL:;
+
+VARREF:;
+
+VARNAME:;
+
+
+//----------------------------------------------------------------------------
+PARENTHESIZEDEXPR: ;  lparen EXPR? rparen;
+
+CONTEXTITEMEXPR:   punto;
+
+FUNCTIONCALL: EQNAME ARGUMENTLIST;
+
+ARGUMENT: EXPRSINGLE 
+        |ARGUMENTPLACEHOLDER;
+
+ARGUMENTPLACEHOLDER: rinterrogacion;
+
+FUNCTIONITEMEXPR: NAMEDFUNCTIONREF
+                |INLINEFUNCTIONEXPR;
+
+NAMEDFUNCTIONREF: EQNAME numeral IntegerLiteral;
+
+INLINEFUNCTIONEXPR: function lparen PARAMLIST ? rparen (as SEQUENCETYPE)? FUNCTIONBODY ;
+
+MAPCONSTRUCTOR: 	map lllave lparen MAPCONSTRUCTORENTRY lparen coma MAPCONSTRUCTORENTRY rparen* rparen? rllave;
+
+MAPCONSTRUCTORENTRY: MAPKEYEXPR dospuntos MAPVALUEEXPR;
+
+MAPKEYEXPR: EXPRSINGLE;
+
+MAPVALUEEXPR: EXPRSINGLE;
+
+ARRAYCONSTRUCTOR: SQUAREARRAYCONSTRUCTOR
+                |CURLYARRAYCONSTRUCTOR;
+
+SQUAREARRAYCONSTRUCTOR: lcorchete (EXPRSINGLE( coma EXPRSINGLE)*)? rcorchete;
+
+CURLYARRAYCONSTRUCTOR: array ENCLOSEDEXPR;
+
+UNARYLOOKUP: rinterrogacion KEYSPECIFIER ;
+
+SINGLETYPE:  SIMPLETYPENAME rinterrogacion ?;
+
+TYPEDECLARATION: as SEQUENCETYPE ;
+
+
+SEQUENCETYPE: (empty_sequence lparen rparen)
+            |(ITEMTYPE OCCURRENCEINDICATOR?);
+
+OCCURRENCEINDICATOR: rinterrogacion
+                    |mul
+                    |mas ;
+
+ITEMTYPE: KINDTEST 
+        |(item lparen rparen)
+        |FUNCTIONTEST
+        |MAPTEST
+        |ARRAYTEST
+        |ATOMICORUNIONTYPE
+        |PARENTHESIZEDITEMTYPE;
+
+
+ATOMICORUNIONTYPE: EQNAME;
+
+KINDTEST: DOCUMENTTEST
+        |ELEMENTTEST
+        |ATTRIBUTETEST
+        |SCHEMAELEMENTTEST
+        |SCHEMAATTRIBUTETEST
+        |PITEST
+        |COMMENTTEST
+        |TEXTTEST
+        |NAMESPACENODETEST
+        |ANYKINDTEST;
+
+ANYKINDTEST: node lparen rparen ;
+
+DOCUMENTTEST: document_node lparen (ELEMENTTEST | SCHEMAELEMENTTEST)? rparen;
+
+TEXTTEST: text lparen rparen;
+
+COMMENTTEST: comment lparen rparen;
+
+NAMESPACENODETEST: namespace_node lparen rparen ;
+
+PITEST: processing_instruction lparen ( ncname | stringliteral )? rparen;
+
+ATTRIBUTETEST: attribute lparen (ATTRIBNAMEORWILDCARD (coma TYPENAME)?)? rparen;
+
+ATTRIBNAMEORWILDCARD: ATTRIBUTENAME
+                    |mul;
+
+SCHEMAATTRIBUTETEST: schema_attribute lparen ATTRIBUTEDECLARATION rparen ;
+
+ATTRIBUTEDECLARATION: ATTRIBUTENAME;
+
+ELEMENTTEST: element lparen (ELEMENTNAMEORWILDCARD (coma TYPENAME rinterrogacion ?)?)? rparen;
+
+ELEMENTNAMEORWILDCARD: ELEMENTNAME
+                    |mul ;
+
+SCHEMAELEMENTTEST: schema_element lparen ELEMENTDECLARATION rparen;
+
+ELEMENTDECLARATION: ELEMENTNAME;
+
+ATTRIBUTENAME: EQNAME;
+
+ELEMENTNAME: EQNAME;
+
+SIMPLETYPENAME: TYPENAME;
+
+TYPENAME: EQNAME;
+
+FUNCTIONTEST: ANYFUNCTIONTEST
+            |TYPEDFUNCTIONTEST
+            ;
+
+ANYFUNCTIONTEST: function lparen mul rparen;
+
+TYPEDFUNCTIONTEST:function lparen (SEQUENCETYPE (coma SEQUENCETYPE)*)? rparen as SEQUENCETYPE ;
+
+MAPTEST: ANYMAPTEST
+        |TYPEDMAPTEST;
+
+ANYMAPTEST: map lparen mul rparen;
+
+TYPEDMAPTEST: map lparen ATOMICORUNIONTYPE coma SEQUENCETYPE rparen;
+
+ARRAYTEST: ANYARRAYTEST
+        |TYPEDARRAYTEST;
+
+ANYARRAYTEST: array lparen mul rparen;
+
+TYPEDARRAYTEST: array lparen SEQUENCETYPE rparen;
+
+PARENTHESIZEDITEMTYPE: lparen ITEMTYPE rparen;
+
+EQNAME: QName 
+        | URIQualifiedName;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RAICES:
     RAICES RAIZ           
 	| RAIZ     
 ;
