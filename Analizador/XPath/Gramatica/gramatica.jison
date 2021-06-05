@@ -43,6 +43,25 @@ BSL                                 "\\".
 "schema-attribute"          return 'schema_attribute';
 "element"                   return 'element';
 "schema-element"            return 'schema_element';
+"is"                        return 'is';
+
+"child"                     return 'child';
+"descendant"                return 'descendant';
+"attribute"                 return 'attribute';
+"self"                      return 'self';
+"descendant-or-self"        return 'descendant_or_self';
+"following-sibling"         return 'following_sibling';
+"following"                 return 'following';
+"namespace"                 return 'namespace';
+
+"parent"                    return 'parent';
+"ancestor"                  return 'ancestor';
+"preceding-sibling"         return 'preceding_sibling';
+"preceding"                 return 'preceding';
+"ancestor-or-self"          return 'ancestor_or_self';
+
+
+
 
 
 "+"                         return 'mas';
@@ -52,13 +71,13 @@ BSL                                 "\\".
 "/"                         return 'div';
 "%"                         return 'mod';
 
-"<="                        return 'lte';
-">="                        return 'gte';
-"<"                         return 'lt';
-">"                         return 'gt';
-"="                         return 'asig';
-"=="                        return 'equal';
-"!="                        return 'nequal';
+"<="                        return 'menorigual';
+">="                        return 'mayorigual';
+"<"                         return 'menorq';
+">"                         return 'mayorq';
+"="                         return 'igual';
+"=="                        return 'digual';
+"!="                        return 'diferente';
 
 "&&"                        return 'and';
 "||"                        return 'or';
@@ -77,8 +96,14 @@ BSL                                 "\\".
 "]"                         return 'rcorchete';
 "{"                         return 'lllave';
 "}"                         return 'rllave';
-
-
+"<<"                        return 'dmenorq';
+">>"                        return 'dmayorq';
+"::"                        return 'ddospuntos';
+".."                        return 'dpunto';
+":*"                        return 'dosppor';
+"*:"                        return 'pordosp';
+"$"                         return 'dolar';
+"@"                         return 'arroba';
 
 
 
@@ -125,11 +150,11 @@ BSL                                 "\\".
 /* Definición de la gramática */
 START : RAICES EOF         
     ;
-XPATH:;
+XPATH:EXPR;
 
-PARAMLIST:;
+PARAMLIST: PARAM (coma PARAM)*;
 
-PARAM:;
+PARAM: dolar EQNAME TYPEDECLARATION;
 
 FUNCTIONBODY:;
 
@@ -184,66 +209,117 @@ CASTEXPR:;
 ARROWEXPR:;
 
 UNARYEXPR:;
+//------------------- AQUI INICIO
+VALUEEXPR:SIMPLEMAPEXPR;
 
-VALUEEXPR:;
+GENERALCOMP:igual
+            |digual
+            |menorq
+            |menorigual
+            |mayorq
+            |mayorigual;
 
-GENERALCOMP:;
+VALUECOMP: igual
+            |diferente
+            |menorq
+            |menorigual
+            |mayorq
+            |mayorigual
+            ;
 
-VALUECOMP:;
+NODECOMP: is
+            |dmenorq
+            |dmayorq;
 
-NODECOMP:;
+SIMPLEMAPEXPR: PATHEXPR (not PATHEXPR)*;
 
-SIMPLEMAPEXPR:;
+PATHEXPR: (div RELATIVEPATHEXPR ?)
+        | (div div RELATIVEPATHEXPR )
+        |RELATIVEPATHEXPR;
 
-PATHEXPR:;
+RELATIVEPATHEXPR: STEPEXPR ((div|div div) STEPEXPR)*;
 
-RELATIVEPATHEXPR:;
+STEPEXPR: POSTFIXEXPR
+        |AXISSTEP;
 
-STEPEXPR:;
+AXISSTEP: (REVERSESTEP|FORWARDSTEP) PREDICATELIST;
 
-AXISSTEP:;
+FORWARDSTEP: (FORWARDAXIS NODETEST)
+            |ABBREVFORWARDSTEP;
 
-FORWARDSTEP:;
+FORWARDAXIS: child ddospuntos
+            | descendant ddospuntos
+            | attribute ddospuntos
+            | self ddospuntos
+            | descendant_or_self ddospuntos
+            | following_sibling ddospuntos
+            | following ddospuntos
+            | namespace ddospuntos
+            ;
 
-FORWARDAXIS:;
+ABBREVFORWARDSTEP: arroba? NODETEST;
 
-ABBREVFORWARDSTEP:;
+REVERSESTEP: REVERSEAXIS NODETEST
+            |ABBREVREVERSESTEP;
 
-REVERSESTEP:;
+REVERSEAXIS: parent ddospuntos
+            | ancestor ddospuntos
+            | preceding_sibling ddospuntos
+            | preceding ddospuntos
+            | ancestor_or_self ddospuntos;
 
-REVERSEAXIS:;
+ABBREVREVERSESTEP: dpunto;
 
-ABBREVREVERSESTEP:;
+NODETEST: KINDTEST
+        | NAMETEST;
 
-NODETEST:;
+NAMETEST: EQNAME
+        | WILDCARD;
 
-NAMETEST:;
+WILDCARD: mul
+        | (ncname) dosppor
+        | pordosp (ncname)
+        | (BracedURILiteral) mul;
 
-WILDCARD:;
+POSTFIXEXPR: PRIMARYEXPR (PREDICATE |ARGUMENTLIST | LOOKUP)*;
 
-POSTFIXEXPR:;
+ARGUMENTLIST: lparen (ARGUMENT (coma ARGUMENT)*)? rparen;
 
-ARGUMENTLIST:;
+PREDICATELIST: PREDICATE*;
 
-PREDICATELIST:;
+PREDICATE: lcorchete EXPR rcorchete;
 
-PREDICATE:;
+LOOKUP: rinterrogacion KEYSPECIFIER;
 
-LOOKUP:;
+KEYSPECIFIER: ncname
+            | IntegerLiteral
+            | PARENTHESIZEDEXPR
+            | mul;
 
-KEYSPECIFIER:;
+ARROWFUNCTIONSPECIFIER: EQNAME
+                        | VARREF
+                        |PARENTHESIZEDEXPR;
 
-ARROWFUNCTIONSPECIFIER:;
+PRIMARYEXPR: LITERAL
+            |VARREF
+            |PARENTHESIZEDEXPR
+            |CONTEXTITEMEXPR
+            |FUNCTIONCALL
+            |FUNCTIONITEMEXPR
+            |MAPCONSTRUCTOR
+            |ARRAYCONSTRUCTOR
+            |UNARYLOOKUP;
 
-PRIMARYEXPR:;
+LITERAL: NUMERICLITERAL
+        |StringLiteral();
 
-LITERAL:;
+NUMERICLITERAL: IntegerLiteral
+                |DecimalLiteral
+                |DoubleLiteral;
 
-NUMERICLITERAL:;
+VARREF: dolar VARNAME;
 
-VARREF:;
-
-VARNAME:;
+VARNAME: EQNAME;
 
 
 //----------------------------------------------------------------------------
@@ -360,7 +436,19 @@ FUNCTIONTEST: ANYFUNCTIONTEST
 
 ANYFUNCTIONTEST: function lparen mul rparen;
 
-TYPEDFUNCTIONTEST:function lparen (SEQUENCETYPE (coma SEQUENCETYPE)*)? rparen as SEQUENCETYPE ;
+
+
+TYPEDFUNCTIONTEST:function lparen SEQUENCETYPE TYPEDFUNCTIONTESTLIST rparen as SEQUENCETYPE
+                |function lparen SEQUENCETYPE rparen as SEQUENCETYPE
+                |function lparen   rparen as SEQUENCETYPE ;
+
+TYPEDFUNCTIONTESTLIST: TYPEDFUNCTIONTESTLIST TYPEDFUNCTIONL
+                    | TYPEDFUNCTIONL;
+
+TYPEDFUNCTIONL: coma SEQUENCETYPE;
+
+
+            
 
 MAPTEST: ANYMAPTEST
         |TYPEDMAPTEST;
