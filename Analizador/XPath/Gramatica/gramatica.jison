@@ -60,6 +60,12 @@ BSL                                 "\\".
 "preceding"                 return 'preceding';
 "ancestor-or-self"          return 'ancestor_or_self';
 
+"eq"                        return 'eq_';
+"ne"                        return 'ne_';
+"lt"                        return 'lt_';
+"le"                        return 'le_';
+"gt"                        return 'gt_';
+"ge"                        return 'ge_';
 
 
 
@@ -219,32 +225,64 @@ GENERALCOMP:igual
             |mayorq
             |mayorigual;
 
-VALUECOMP: igual
-            |diferente
-            |menorq
-            |menorigual
-            |mayorq
-            |mayorigual
+VALUECOMP: eq_
+            | ne_
+            | lt_
+            | le_
+            | gt_
+            | ge_
             ;
 
 NODECOMP: is
             |dmenorq
             |dmayorq;
 
-SIMPLEMAPEXPR: PATHEXPR (not PATHEXPR)*;
+SIMPLEMAPEXPR: PATHEXPR SIMPLEMAPEXPRL1;
 
-PATHEXPR: (div RELATIVEPATHEXPR ?)
-        | (div div RELATIVEPATHEXPR )
-        |RELATIVEPATHEXPR;
+SIMPLEMAPEXPRL1:SIMPLEMAPEXPRL1 SIMPLEMAPEXPRL2
+                |SIMPLEMAPEXPRL2;
 
-RELATIVEPATHEXPR: STEPEXPR ((div|div div) STEPEXPR)*;
+SIMPLEMAPEXPRL2:not PATHEXPR;
+
+
+
+PATHEXPR: div RELATIVEPATHEXPR
+        | div
+        | ddiagonal RELATIVEPATHEXPR
+        | RELATIVEPATHEXPR;
+
+
+
+
+RELATIVEPATHEXPR: STEPEXPR RELATIVEPATHEXPRL1
+                |STEPEXPR;
+
+RELATIVEPATHEXPRL1:RELATIVEPATHEXPRL1 RELATIVEPATHEXPRL2
+                |RELATIVEPATHEXPRL2 ;
+RELATIVEPATHEXPRL2: RELATIVEPATHEXPRL2VAR STEPEXPR;
+RELATIVEPATHEXPRL2VAR:div
+                    |ddiagonal;
+
+
+
 
 STEPEXPR: POSTFIXEXPR
         |AXISSTEP;
 
-AXISSTEP: (REVERSESTEP|FORWARDSTEP) PREDICATELIST;
 
-FORWARDSTEP: (FORWARDAXIS NODETEST)
+
+
+
+AXISSTEP: AXISSTEPVAR PREDICATELIST;
+
+AXISSTEPVAR:REVERSESTEP
+            |FORWARDSTEP;
+
+
+
+
+
+FORWARDSTEP: FORWARDAXIS NODETEST
             |ABBREVFORWARDSTEP;
 
 FORWARDAXIS: child ddospuntos
@@ -257,7 +295,12 @@ FORWARDAXIS: child ddospuntos
             | namespace ddospuntos
             ;
 
-ABBREVFORWARDSTEP: arroba? NODETEST;
+
+
+ABBREVFORWARDSTEP: arroba NODETEST
+                |NODETEST;
+
+
 
 REVERSESTEP: REVERSEAXIS NODETEST
             |ABBREVREVERSESTEP;
@@ -281,11 +324,34 @@ WILDCARD: mul
         | pordosp (ncname)
         | (BracedURILiteral) mul;
 
-POSTFIXEXPR: PRIMARYEXPR (PREDICATE |ARGUMENTLIST | LOOKUP)*;
+POSTFIXEXPR: PRIMARYEXPR POSTFIXEXPRL1
+            |PRIMARYEXPR;
 
-ARGUMENTLIST: lparen (ARGUMENT (coma ARGUMENT)*)? rparen;
+POSTFIXEXPRL1:POSTFIXEXPRL1 POSTFIXEXPRL2
+            |POSTFIXEXPRL2;
 
-PREDICATELIST: PREDICATE*;
+POSTFIXEXPRL2:PREDICATE 
+            |ARGUMENTLIST 
+            |LOOKUP;
+
+
+
+ARGUMENTLIST: lparen ARGUMENTLISTL1 rparen
+            |lparen  rparen;
+
+ARGUMENTLISTL1:ARGUMENT ARGUMENTLISTL2
+            |ARGUMENT;
+
+ARGUMENTLISTL2:ARGUMENTLISTL2 ARGUMENTLISTL3
+            |ARGUMENTLISTL3;
+
+ARGUMENTLISTL3:coma ARGUMENT;
+
+
+
+PREDICATELIST: PREDICATELIST PREDICATE
+            |PREDICATE
+            |;
 
 PREDICATE: lcorchete EXPR rcorchete;
 
@@ -311,7 +377,7 @@ PRIMARYEXPR: LITERAL
             |UNARYLOOKUP;
 
 LITERAL: NUMERICLITERAL
-        |StringLiteral();
+        |StringLiteral;
 
 NUMERICLITERAL: IntegerLiteral
                 |DecimalLiteral
@@ -323,7 +389,8 @@ VARNAME: EQNAME;
 
 
 //----------------------------------------------------------------------------
-PARENTHESIZEDEXPR: ;  lparen EXPR? rparen;
+PARENTHESIZEDEXPR: ;  lparen EXPR rparen
+                    |lparen rparen;
 
 CONTEXTITEMEXPR:   punto;
 
@@ -339,9 +406,26 @@ FUNCTIONITEMEXPR: NAMEDFUNCTIONREF
 
 NAMEDFUNCTIONREF: EQNAME numeral IntegerLiteral;
 
-INLINEFUNCTIONEXPR: function lparen PARAMLIST ? rparen (as SEQUENCETYPE)? FUNCTIONBODY ;
+INLINEFUNCTIONEXPR: function lparen PARAMLIST  rparen as SEQUENCETYPE FUNCTIONBODY
+                    |function lparen rparen as SEQUENCETYPE FUNCTIONBODY 
+                    |function lparen PARAMLIST  rparen  FUNCTIONBODY
+                    ||function lparen rparen  FUNCTIONBODY
+                    ;
 
-MAPCONSTRUCTOR: 	map lllave lparen MAPCONSTRUCTORENTRY lparen coma MAPCONSTRUCTORENTRY rparen* rparen? rllave;
+
+
+MAPCONSTRUCTOR: 	map lllave MAPCONSTRUCTORL1  rllave
+                    |map lllave  rllave;
+
+MAPCONSTRUCTORL1:MAPCONSTRUCTORENTRY MAPCONSTRUCTORL2 
+                |MAPCONSTRUCTORENTRY;
+
+MAPCONSTRUCTORL2:MAPCONSTRUCTORL2 MAPCONSTRUCTORL3
+                |MAPCONSTRUCTORL3;
+
+MAPCONSTRUCTORL3:coma MAPCONSTRUCTORENTRY;
+
+
 
 MAPCONSTRUCTORENTRY: MAPKEYEXPR dospuntos MAPVALUEEXPR;
 
@@ -352,7 +436,21 @@ MAPVALUEEXPR: EXPRSINGLE;
 ARRAYCONSTRUCTOR: SQUAREARRAYCONSTRUCTOR
                 |CURLYARRAYCONSTRUCTOR;
 
-SQUAREARRAYCONSTRUCTOR: lcorchete (EXPRSINGLE( coma EXPRSINGLE)*)? rcorchete;
+
+
+SQUAREARRAYCONSTRUCTOR: lcorchete SQUAREARRAYCONSTRUCTORL1 rcorchete
+                        |lcorchete  rcorchete;
+
+SQUAREARRAYCONSTRUCTORL1: EXPRSINGLE SQUAREARRAYCONSTRUCTORL2
+                        | EXPRSINGLE ;
+
+SQUAREARRAYCONSTRUCTORL2:SQUAREARRAYCONSTRUCTORL2 SQUAREARRAYCONSTRUCTORL3
+                        |SQUAREARRAYCONSTRUCTORL3;
+
+SQUAREARRAYCONSTRUCTORL3:coma EXPRSINGLE;
+
+
+
 
 CURLYARRAYCONSTRUCTOR: array ENCLOSEDEXPR;
 
@@ -363,15 +461,16 @@ SINGLETYPE:  SIMPLETYPENAME rinterrogacion ?;
 TYPEDECLARATION: as SEQUENCETYPE ;
 
 
-SEQUENCETYPE: (empty_sequence lparen rparen)
-            |(ITEMTYPE OCCURRENCEINDICATOR?);
+SEQUENCETYPE: empty_sequence lparen rparen
+            |ITEMTYPE OCCURRENCEINDICATOR
+            |ITEMTYPE;
 
 OCCURRENCEINDICATOR: rinterrogacion
                     |mul
                     |mas ;
 
 ITEMTYPE: KINDTEST 
-        |(item lparen rparen)
+        |item lparen rparen
         |FUNCTIONTEST
         |MAPTEST
         |ARRAYTEST
@@ -394,7 +493,12 @@ KINDTEST: DOCUMENTTEST
 
 ANYKINDTEST: node lparen rparen ;
 
-DOCUMENTTEST: document_node lparen (ELEMENTTEST | SCHEMAELEMENTTEST)? rparen;
+DOCUMENTTEST: document_node lparen DOCUMENTTESTL1 rparen
+            |document_node lparen rparen;
+
+DOCUMENTTESTL1: ELEMENTTEST 
+              | SCHEMAELEMENTTEST;
+
 
 TEXTTEST: text lparen rparen;
 
@@ -402,9 +506,17 @@ COMMENTTEST: comment lparen rparen;
 
 NAMESPACENODETEST: namespace_node lparen rparen ;
 
-PITEST: processing_instruction lparen ( ncname | stringliteral )? rparen;
+PITEST: processing_instruction lparen PITESTL1 rparen
+        |processing_instruction lparen rparen;
 
-ATTRIBUTETEST: attribute lparen (ATTRIBNAMEORWILDCARD (coma TYPENAME)?)? rparen;
+PITESTL1: ncname 
+        | stringliteral;
+
+ATTRIBUTETEST: attribute lparen ATTRIBUTETESTL1 rparen
+            |attribute lparen  rparen;
+
+ATTRIBUTETESTL1:ATTRIBNAMEORWILDCARD coma TYPENAME
+                |ATTRIBNAMEORWILDCARD;
 
 ATTRIBNAMEORWILDCARD: ATTRIBUTENAME
                     |mul;
@@ -413,7 +525,15 @@ SCHEMAATTRIBUTETEST: schema_attribute lparen ATTRIBUTEDECLARATION rparen ;
 
 ATTRIBUTEDECLARATION: ATTRIBUTENAME;
 
-ELEMENTTEST: element lparen (ELEMENTNAMEORWILDCARD (coma TYPENAME rinterrogacion ?)?)? rparen;
+ELEMENTTEST: element lparen ELEMENTTEST1 rparen
+            |element lparen  rparen;
+
+ELEMENTTEST1:ELEMENTNAMEORWILDCARD ELEMENTTEST2
+            |ELEMENTNAMEORWILDCARD;
+
+ELEMENTTEST2:coma TYPENAME rinterrogacion
+            |coma TYPENAME;
+
 
 ELEMENTNAMEORWILDCARD: ELEMENTNAME
                     |mul ;
