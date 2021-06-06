@@ -11,6 +11,8 @@ acceptedcharssingle                 [^\'\\]
 stringsingle                        {escape}|{acceptedcharssingle}
 charliteral                         \'{stringsingle}\'
 
+BracedURILiteral                    "Q" "{" [^{}]* "}"
+
 BSL                                 "\\".
 %s                                  comment
 %%
@@ -148,13 +150,23 @@ BSL                                 "\\".
 
 
 /* Number literals */
-(([0-9]+"."[0-9]*)|("."[0-9]+))     return 'DoubleLiteral';
+
 [0-9]+                              return 'IntegerLiteral';
+(([0-9]+"."[0-9]*)|("."[0-9]+))     return 'DecimalLiteral';
+(([0-9]+"."[0-9]*)|("."[0-9]+))     return 'DoubleLiteral';
 
 [a-zA-Z_][a-zA-Z0-9_ñÑ]*            return 'identifier';
 
-{stringliteral}                     return 'StringLiteral'
-{charliteral}                       return 'CharLiteral'
+{stringliteral}                     return 'StringLiteral';
+{charliteral}                       return 'CharLiteral';
+[a-zA-Z0-9]                         return 'Char';
+                               
+/*AQUI INICO LA PARTE DE SIMBOLOS TEMINALES*/
+/*DoubleLiteral:(("." Digits) | (Digits ("." [0-9]*)?)) [eE] [+-]?Digits;*/
+/*StringLiteral: ('"' (EscapeQuot | [^"])* '"') | ("'" (EscapeApos | [^'])* "'");*/
+
+
+
 
 //error lexico
 .                                   {
@@ -174,9 +186,9 @@ BSL                                 "\\".
 // DEFINIMOS PRESEDENCIA DE OPERADORES
 %left 'or'
 %left 'and'
-%left 'lt' 'lte' 'gt' 'gte' 'equal' 'nequal'
-%left 'plus' 'minus'
-%left 'times' 'div' 'mod'
+%left 'menorq' 'menorigual' 'mayorq' 'mayorigual' 'igual' 'diferente'
+%left 'mas' 'menos'
+%left 'mul' 'div' 'mod'
 %left 'pow'
 %left 'not' 
 %left UMINUS
@@ -192,9 +204,14 @@ START : RAICES EOF
     ;
 XPATH:EXPR;
 
-PARAMLIST: PARAM (coma PARAM)*;
+PARAMLIST: PARAM PARAMLISTL1
+        |PARAM;
+PARAMLISTL1:PARAMLISTL1 PARAMLISTL2
+        |PARAMLISTL2;
+PARAMLISTL2:coma PARAM;
 
-PARAM: dolar EQNAME TYPEDECLARATION?;
+PARAM: dolar EQNAME TYPEDECLARATION
+        |dolar EQNAME;
 
 FUNCTIONBODY:ENCLOSEDEXPR;
 
@@ -541,9 +558,9 @@ NAMETEST: EQNAME
         | WILDCARD;
 
 WILDCARD: mul
-        | (ncname) dosppor
-        | pordosp (ncname)
-        | (BracedURILiteral) mul;
+        | NCName dosppor
+        | pordosp NCName
+        | BracedURILiteral mul;
 
 POSTFIXEXPR: PRIMARYEXPR POSTFIXEXPRL1
             |PRIMARYEXPR;
@@ -730,8 +747,8 @@ NAMESPACENODETEST: namespace_node lparen rparen ;
 PITEST: processing_instruction lparen PITESTL1 rparen
         |processing_instruction lparen rparen;
 
-PITESTL1: ncname 
-        | stringliteral;
+PITESTL1: NCName 
+        | Stringliteral;
 
 ATTRIBUTETEST: attribute lparen ATTRIBUTETESTL1 rparen
             |attribute lparen  rparen;
@@ -812,80 +829,7 @@ EQNAME: QName
 
 
 
+QName:NCName dospuntos ;
+NCName:dospuntos identifier ;
 
-
-
-
-
-
-
-
-
-
-
-RAICES:
-    RAICES RAIZ           
-	| RAIZ     
-;
-
-RAIZ:
-    PRINT semicolon       
-    | OBJETO              
-;
-
-OBJETO:
-      lt identifier LATRIBUTOS gt OBJETOS           lt div identifier gt       
-    | lt identifier LATRIBUTOS gt LISTA_ID_OBJETO   lt div identifier gt       
-    | lt identifier LATRIBUTOS div gt                                          
-;
-
-LATRIBUTOS: ATRIBUTOS                              
-           |                                        
-;
-
-ATRIBUTOS:
-    ATRIBUTOS ATRIBUTO                              
-    |ATRIBUTO                                       
-;
-
-ATRIBUTO: 
-    identifier asig StringLiteral                  
-;
-
-LISTA_ID_OBJETO: LISTA_ID_OBJETO identifier         
-        | identifier                                
-;
-
-OBJETOS:
-      OBJETOS OBJETO        
-	| OBJETO       
-    ;         
-
-PRINT:
-    print lparen EXPR rparen   
-    ;        
-
-EXPR:
-    PRIMITIVA                           
-    | OP_ARITMETICAS                    
-;
-
-OP_ARITMETICAS:
-    | EXPR minus EXPR                   
-    | EXPR times EXPR                   
-    |EXPR plus EXPR                      
-    | EXPR div EXPR                   
-    | EXPR mod EXPR                     
-    | minus EXPR %prec UMINUS          
-    | lparen EXPR rparen                
-;
-
-PRIMITIVA:
-    IntegerLiteral                    
-    | DoubleLiteral                     
-    | StringLiteral                     
-    | charliteral                   
-    | null                              
-    | true                              
-    | false                             
-;
+URIQualifiedName: BracedURILiteral NCName;	
