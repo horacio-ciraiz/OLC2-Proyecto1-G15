@@ -7,9 +7,9 @@
       
 -->
 
-        <link rel="stylesheet" href="css/Style.css" TYPE="text/css">
+        <link rel="stylesheet" href="estilo.css" TYPE="text/css">
 
-        <script  src="js/Action.js"></script>
+        <script  src="./accion.js"></script>
         <script  src="../Analizador/XPath/Gramatica/gramatica.js"></script>
 
         <!--
@@ -48,13 +48,17 @@
                     <td >
                         <select name ="Menu_XML" class="Menu_XML" id="Menu_XML" onchange="MetodoXML();">
                             <Option value =" null " disabled selected  selected="selected">Opciones XML</option>".
-                            <Option value = "Menu_AscXml">Analizar Ascendente </option>
+                                <Option value = "Menu_AbrirXml" >Abrir Xml</option>
+                                <Option value = "Menu_GuardarXml"id="save">Guardar Xml</option>     
+                                <Option value = "Menu_AscXml">Analizar Ascendente </option>
                             <Option value = "Menu_DesXml" >Analizar Descendente</option>   
                         </select>
                     </td>
                     <td >
                         <select name ="Menu_XPath" class="Menu_XPath" id="Menu_XPath" onchange="MetodoXPath();">
                             <Option value =" null " disabled selected  selected="selected">Opciones Xpath</option>".
+                            <Option value = "Menu_AbrirXPath" >Abrir XPath</option> 
+                            <Option value = "Menu_GuardarXml" id="save">Guardar XPath</option>
                             <Option value = "Menu_AscXPath"> Analizar Ascendente</option>
                             <Option value = "Menu_DesXPath" >Analizar Descendente</option>   
                         </select>
