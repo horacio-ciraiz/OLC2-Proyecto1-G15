@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+	<head>
+        <title>Translator in Docker</title>
+       <!-- <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+        <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+      
+-->
+
+        <link rel="stylesheet" href="css/Style.css" TYPE="text/css">
+
+        <script  src="js/Action.js"></script>
+        <script  src="../Analizador/XPath/Gramatica/gramatica.js"></script>
+
+        <!--
+        <script src="js/codemirror/lib/codemirror.js"></script>
+        <link rel="stylesheet" href="js/codemirror/lib/codemirror.css">
+
+        <link rel="stylesheet" href="js/codemirror/theme/neo.css">
+
+        <script src="js/codemirror/mode/clike/clike.js"></script>    -->       <!--Java-->
+      <!--  <script src="js/codemirror/mode/javascript/javascript.js"></script> JavaScript-->
+        <!-- <script src="js/codemirror/mode/python/python.js"></script>        Python-->
+    
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+ <!-- 
+        <script>
+            window.onload=function() {
+                document.getElementById("defaultOpen").click();
+            }
+            </script> -->
+	</head>
+	<body>
+        <div class="PanelMenu">
+            <table border=0 >
+                <tr>
+                    <td>
+                        <select name ="Menu" class="Menu" id="Menu" onchange="MetodoAbrir();">
+                            <option value =" null " disabled selected selected="selected"> Menu</option>".
+                            <Option value = "Menu_Abrir" id="open_file" type="file">Abrir</option>     
+                            <Option value = "Menu_Guardar"id="save">Guardar</option>
+                            <Option value = "Menu_Analizar" id="analizar">Analizar</option>     
+                            
+                        </select>
+                    </td>
+                    <td >
+                        <select name ="Menu_XML" class="Menu_XML" id="Menu_XML" onchange="MetodoXML();">
+                            <Option value =" null " disabled selected  selected="selected">Opciones XML</option>".
+                            <Option value = "Menu_AscXml">Analizar Ascendente </option>
+                            <Option value = "Menu_DesXml" >Analizar Descendente</option>   
+                        </select>
+                    </td>
+                    <td >
+                        <select name ="Menu_XPath" class="Menu_XPath" id="Menu_XPath" onchange="MetodoXPath();">
+                            <Option value =" null " disabled selected  selected="selected">Opciones Xpath</option>".
+                            <Option value = "Menu_AscXPath"> Analizar Ascendente</option>
+                            <Option value = "Menu_DesXPath" >Analizar Descendente</option>   
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="Tablas">
+        <table>
+            <tr>
+                <table border=0  class="tablaintro">
+                    <tr>
+                        <td>
+                            <h3>Consola Entrada XML</h3>
+                            <textarea Multiline="true"  name="EntradaXML"  id="EntradaXML" class="entrada">Consola Entrada XML</textarea>
+                        </td>
+                        <td>
+                            <h3>Consola Entrada XPath</h3>
+                            <textarea Multiline="true"  name="EntradaXPath" id= "EntradaXPath"  class="entrada">Consola Entrada XPath</textarea>
+                        </td>
+                    </tr>
+                </table>
+            </tr>
+            <tr>
+                <td><textarea id ="ConsolaSalida" name="ConsolaSalida"  readonly="readonly" Multiline="true" class="consola">Consola Salida</textarea></td> 
+            </tr>
+        </table>
+    </div>
+
+	</body>
+</html>

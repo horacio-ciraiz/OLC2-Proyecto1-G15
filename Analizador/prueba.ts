@@ -6,19 +6,14 @@ const gramatica = require('./XPath/Gramatica/gramatica');
 
 function ejecutarCodigo(entrada:string){
     const objetos = gramatica.parse(entrada);
-
+    return "listo";
    
     //const ast:AST = new AST(instrucciones);
 
-    
 
     //instrucciones.forEach((element:Instruccion) => {
     //    element.ejecutar(entornoGlobal,ast);
     //});
 }
 
-ejecutarCodigo(`
-    print(1);
-    print(true);
-    print("hola mundo");
-`);
+ejecutarCodigo(`"//book/rice/price/*\n /book/ried"`);
