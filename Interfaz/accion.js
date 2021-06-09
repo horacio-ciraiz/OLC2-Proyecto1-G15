@@ -1,6 +1,9 @@
-function MetodoXPath() {
 
-    var cod= document.getElementById("Menu_XPath").value;
+
+
+function MetodoXPath() {
+    try {
+        var cod= document.getElementById("Menu_XPath").value;
     if(cod=="Menu_AbrirXPath"){
       
       
@@ -65,6 +68,15 @@ function MetodoXPath() {
   
   
     }
+    } catch (error) {
+        console.log(error);
+        alert("Error");
+    }
+
+    
+
+
+    document.getElementById("Menu_XPath").selectedIndex = 0;
   }
   
   function generarTextoGuardar(){
