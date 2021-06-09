@@ -214,14 +214,15 @@ OPERACION:OPERACION mas OPERACION{$$=$1+""+$2+""+$3;}
   |OPERAD{$$=$1;}
   ;
 
-OPERAD:  
-        |arroba mul{$$=$1+""+$2;}
+OPERAD: arroba mul{$$=$1+""+$2;}
         |arroba identifier{$$=$1+""+$2;}
-        |identifier{$$=$1;}
         |DecimalLiteral{$$=$1;}
         |IntegerLiteral{$$=$1;}
         |last lparen rparen{$$=$1+""+$2+""+$3;}
-        |position lparen rparen{$$=$1+""+$2+""+$3;};
+        |position lparen rparen{$$=$1+""+$2+""+$3;}
+        |StringLiteral{$$=$1;}
+        |charliteral{$$=$1;}
+        |identifier{$$=$1;};
 
 
 METODO:   text lparen rparen{$$=$1+""+$2+""+$3;}
