@@ -1,0 +1,3 @@
+Para convertir archivo jison a js:
+jison .\gramaticaXML.jison
+
