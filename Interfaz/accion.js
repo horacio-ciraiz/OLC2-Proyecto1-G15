@@ -1,80 +1,74 @@
 
-
-
 function MetodoXPath() {
     try {
-        var cod= document.getElementById("Menu_XPath").value;
-    if(cod=="Menu_AbrirXPath"){
-      
-      
-      var input = document.createElement('input');
-      input.type = 'file';
-      input.onchange = e => { 
-        // getting a hold of the file reference
-        var file = e.target.files[0]; 
-        // setting up the reader
-        var reader = new FileReader();
-        reader.readAsText(file,'UTF-8');
-        // here we tell the reader what to do when it's done reading...
-        reader.onload = readerEvent => {
-           var content = readerEvent.target.result; // this is the content!
-  
-           document.getElementById("entradatext").value = content;
-           
-           var editor=CodeMirror.fromTextArea(
-            document.getElementById("entradatext"),{
-              theme:"neo",
-              lineNumbers:true,
-              mode: "text/x-java",
-              scrollbarStyle:"native",
-            
-          });
-          editor.setSize("550px","300px");
-          
-  
-            input= document.getElementById("entradatext").value //Consola que tiene el texto 
-  
-            //document.getElementById("ConsolaPython").value = input; //Consola secundaria 
-  
-        }
-     
-     }
-     
-     input.click();
-  
-     var slcchange = document.getElementById("Menu");
-      slcchange.addEventListener("null", function() {
-      });
-  
-    }else if ( cod=="Menu_DesXPath"){ //------------Analizar Descendentemente Xpath
-  
-      var texto = document.getElementById("EntradaXPath").value 
-      if(texto==""){
-        alert("Debe Abrir un Archivo Xpath");
-      }else{
-
-        var objetos = gramatica.parse(texto);
-        alert(objetos.codigo);
-        alert("Analisis Terminado")
-        document.getElementById("ConsolaSalida").value =objetos.codigo;
+      var cod= document.getElementById("Menu_XPath").value;
+      if(cod=="Menu_AbrirXPath"){
         
-      }
-     
-    }else if ( cod=="Menu_Guardar"){
+        
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = e => { 
+          // getting a hold of the file reference
+          var file = e.target.files[0]; 
+          // setting up the reader
+          var reader = new FileReader();
+          reader.readAsText(file,'UTF-8');
+          // here we tell the reader what to do when it's done reading...
+          reader.onload = readerEvent => {
+             var content = readerEvent.target.result; // this is the content!
     
+             document.getElementById("entradatext").value = content;
+             
+             var editor=CodeMirror.fromTextArea(
+              document.getElementById("entradatext"),{
+                theme:"neo",
+                lineNumbers:true,
+                mode: "text/x-java",
+                scrollbarStyle:"native",
+              
+            });
+            editor.setSize("550px","300px");
+            
+    
+              input= document.getElementById("entradatext").value //Consola que tiene el texto 
+    
+              //document.getElementById("ConsolaPython").value = input; //Consola secundaria 
+    
+          }
+       
+       }
+       
+       input.click();
+    
+       var slcchange = document.getElementById("Menu");
+        slcchange.addEventListener("null", function() {
+        });
+    
+      }else if ( cod=="Menu_DesXPath"){ //------------Analizar Descendentemente Xpath
+    
+        var texto = document.getElementById("EntradaXPath").value 
+        if(texto==""){
+          alert("Debe Abrir un Archivo Xpath");
+        }else{
   
-      descargarArchivo(generarTextoGuardar(), 'Guardado.java');
+          var objetos = gramatica.parse(texto);
+          alert(objetos.codigo);
+          alert("Analisis Terminado")
+          document.getElementById("ConsolaSalida").value =objetos.codigo;
+          
+        }
+       
+      }else if ( cod=="Menu_Guardar"){
       
-  
-  
-    }
-    } catch (error) {
-        console.log(error);
-        alert("Error");
-    }
-
     
-
+        descargarArchivo(generarTextoGuardar(), 'Guardado.java');
+        
+    
+    
+      }
+    } catch (error) {
+      
+    }
 
     document.getElementById("Menu_XPath").selectedIndex = 0;
   }
