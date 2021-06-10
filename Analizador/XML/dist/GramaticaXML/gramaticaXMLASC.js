@@ -71,7 +71,7 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var gramaticaXML = (function(){
+var gramaticaXMLASC = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,5],$V1=[5,8],$V2=[1,8],$V3=[11,13],$V4=[1,12],$V5=[9,11,13],$V6=[8,9];
 var parser = {trace: function trace () { },
 yy: {},
@@ -597,88 +597,64 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:console.log("Comenzo el comentario"); this.begin("Comentario"); 
+case 0:this.begin("Comentario"); 
 break;
 case 1:
 break;
 case 2:
 break;
-case 3:console.log("Termino el comentario"); this.popState();
+case 3:this.popState();
 break;
-case 4:console.log("Texto dentro del comentario: "+yy_.yytext+" :(")
+case 4:console.log("comentario: "+yy_.yytext)
 break;
-case 5:console.log("Comenzo una etiqueta"); this.begin("Etiqueta"); 
+case 5:/* skip whitespace */
 break;
-case 6:
+case 6:return 'mas';
 break;
-case 7:
+case 7:return 'menos';
 break;
-case 8:console.log("Atributo");
+case 8:return 'por';
 break;
-case 9:console.log("Igual de Atributo");
+case 9:return 13;
 break;
-case 10:console.log("Valor")
+case 10:return 'resto';
 break;
-case 11:console.log("Termino una etiqueta de apertura"); this.popState();
+case 11:return 'menor_igual';
 break;
-case 12:console.log("Termino una etiqueta de cierre"); this.popState();
+case 12:return 'mayor_igual';
 break;
-case 13:/* skip comments */
+case 13:return 8;
 break;
-case 14:this.begin('comment');
+case 14:return 11;
 break;
-case 15:this.popState();
+case 15:return 17;
 break;
-case 16:/* skip comment content*/
+case 16:return 'ptcoma';
 break;
-case 17:/* skip whitespace */
+case 17:return 'parizq';
 break;
-case 18:return 'mas';
+case 18:return 'parder';
 break;
-case 19:return 'menos';
+case 19:return 'Decimal';
 break;
-case 20:return 'por';
+case 20:return 'numero';
 break;
-case 21:return 13;
+case 21:return 9;
 break;
-case 22:return 'resto';
+case 22:return 18
 break;
-case 23:return 'menor_igual';
+case 23:return 'caracter'
 break;
-case 24:return 'mayor_igual';
-break;
-case 25:return 8;
-break;
-case 26:return 11;
-break;
-case 27:return 17;
-break;
-case 28:return 'ptcoma';
-break;
-case 29:return 'parizq';
-break;
-case 30:return 'parder';
-break;
-case 31:return 'Decimal';
-break;
-case 32:return 'numero';
-break;
-case 33:return 9;
-break;
-case 34:return 18
-break;
-case 35:return 'caracter'
-break;
-case 36:
+case 24:
                                         console.error('Error!, error léxico: ' + yy_.yytext + ', en la linea: ' + yy_.yylloc.first_line + ', en la columna: ' + yy_.yylloc.first_column);
                                     
 break;
-case 37:return 5
+case 25:return 5
 break;
 }
 },
-rules: [/^(?:<!--)/i,/^(?:[ \r\t]+)/i,/^(?:\n)/i,/^(?:-->)/i,/^(?:[^"-->"]+)/i,/^(?:>[A-Za-z][A-Za-z0-9]*)/i,/^(?:[ \r\t]+)/i,/^(?:\n)/i,/^(?:[A-Za-z][A-Za-z0-9]*)/i,/^(?:=)/i,/^(?:"[^\n\"]*")/i,/^(?:<)/i,/^(?:\/>)/i,/^(?:\/\/.*)/i,/^(?:\/\*)/i,/^(?:\*\/)/i,/^(?:.)/i,/^(?:\s+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:%)/i,/^(?:<=)/i,/^(?:>=)/i,/^(?:<)/i,/^(?:>)/i,/^(?:=)/i,/^(?:;)/i,/^(?:\()/i,/^(?:\))/i,/^(?:(([0-9]+\.[0-9]*)|(\.[0-9]+)))/i,/^(?:[0-9]+)/i,/^(?:[a-zA-Z_][a-zA-Z0-9_ñÑ]*)/i,/^(?:("((\\([\'\"\\bfnrtv]))|([^\"\\]+))*"))/i,/^(?:('((\\([\'\"\\bfnrtv]))|([^\'\\]))'))/i,/^(?:.)/i,/^(?:$)/i],
-conditions: {"comment":{"rules":[0,5,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37],"inclusive":true},"Etiqueta":{"rules":[6,7,8,9,10,11,12],"inclusive":false},"Comentario":{"rules":[1,2,3,4],"inclusive":false},"INITIAL":{"rules":[0,5,13,14,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37],"inclusive":true}}
+rules: [/^(?:<!--)/i,/^(?:[ \r\t]+)/i,/^(?:\n)/i,/^(?:-->)/i,/^(?:[^"-->"]+)/i,/^(?:\s+)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:%)/i,/^(?:<=)/i,/^(?:>=)/i,/^(?:<)/i,/^(?:>)/i,/^(?:=)/i,/^(?:;)/i,/^(?:\()/i,/^(?:\))/i,/^(?:(([0-9]+\.[0-9]*)|(\.[0-9]+)))/i,/^(?:[0-9]+)/i,/^(?:[a-zA-Z_][a-zA-Z0-9_ñÑ]*)/i,/^(?:("((\\([\'\"\\bfnrtv]))|([^\"\\]+))*"))/i,/^(?:('((\\([\'\"\\bfnrtv]))|([^\'\\]))'))/i,/^(?:.)/i,/^(?:$)/i],
+conditions: {"comment":{"rules":[0,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25],"inclusive":true},"Etiqueta":{"rules":[],"inclusive":false},"Comentario":{"rules":[1,2,3,4],"inclusive":false},"INITIAL":{"rules":[0,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25],"inclusive":true}}
 });
 return lexer;
 })();
@@ -692,9 +668,9 @@ return new Parser;
 
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = gramaticaXML;
-exports.Parser = gramaticaXML.Parser;
-exports.parse = function () { return gramaticaXML.parse.apply(gramaticaXML, arguments); };
+exports.parser = gramaticaXMLASC;
+exports.Parser = gramaticaXMLASC.Parser;
+exports.parse = function () { return gramaticaXMLASC.parse.apply(gramaticaXMLASC, arguments); };
 exports.main = function commonjsMain (args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');
