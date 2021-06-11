@@ -1,0 +1,205 @@
+
+XPATH: EXPR EOF{
+        return {
+                codigo:arreglolexico};
+        };
+
+EXPR: EXPRESIONSIMPLE;
+
+EXPRESIONSIMPLE: OREXPRESION;
+//---------OR
+OREXPRESION: ANDEXPRESION OREXPRESIONL1
+        |ANDEXPRESION;
+
+
+OREXPRESIONL1:OREXPRESIONL1 OREXPRESIONL2
+                |OREXPRESIONL2;
+
+OREXPRESIONL2: or_ ANDEXPRESION;
+//--------AND
+ANDEXPRESION:COMPARACIONEXPRESION ANDEXPRESIONL1
+        |COMPARACIONEXPRESION
+        ;
+ANDEXPRESIONL1: ANDEXPRESIONL1 ANDEXPRESIONL2
+        |ANDEXPRESIONL2;
+
+ANDEXPRESIONL2:and_ COMPARACIONEXPRESION;
+
+//COMPARACIONEXPRESION
+COMPARACIONEXPRESION: STRINGCONCATENA COMPARACIONGENERAL STRINGCONCATENA
+                     |STRINGCONCATENA  ;
+
+//COMPARACION GENERAL
+
+COMPARACIONGENERAL:igual
+                |diferente
+                |menorq
+                |menorigual
+                |mayorq
+                |mayorigual
+                ;
+
+//STRINGCONCATENA
+
+STRINGCONCATENA:SUMAEXPRESION;
+//SUMAEXPRESION
+SUMAEXPRESION:MULTIPLICACIONEXPRESION SUMAEXPRESIONL1
+        |MULTIPLICACIONEXPRESION;
+
+SUMAEXPRESIONL1:SUMAEXPRESIONL1 SUMAEXPRESIONL2
+        |SUMAEXPRESIONL2
+        ;
+SUMAEXPRESIONL2:mas MULTIPLICACIONEXPRESION
+                |menos MULTIPLICACIONEXPRESION
+                ;
+
+//MULTIPLICACION
+MULTIPLICACIONEXPRESION:UNIONEXPRESION MULTIPLICACIONEXPRESIONL1
+                        |UNIONEXPRESION
+                        ;
+
+MULTIPLICACIONEXPRESIONL1:MULTIPLICACIONEXPRESIONL1 MULTIPLICACIONEXPRESIONL2
+                        |MULTIPLICACIONEXPRESIONL2;
+
+MULTIPLICACIONEXPRESIONL2: mul UNIONEXPRESION
+                        |div_ UNIONEXPRESION
+                        |mod_ UNIONEXPRESION
+                        ;
+//UNION EXPRESION
+
+UNIONEXPRESION:INTERSECCINEXPRESION UNIONEXPRESIONL1
+                |INTERSECCINEXPRESION
+                ;
+
+UNIONEXPRESIONL1: UNIONEXPRESIONL1 UNIONEXPRESIONL2
+                |UNIONEXPRESIONL2;
+
+UNIONEXPRESIONL2: simpleor INTERSECCINEXPRESION;
+
+//INTERSECCION
+INTERSECCINEXPRESION:INSTACIAEXPRESION;
+
+//INSTACIAEXPRESION
+INSTACIAEXPRESION:EXPRESIONUNARIA;
+//EXPRESION UNARIA FALTA SIGNO MAS Y MENOS
+EXPRESIONUNARIA: PATHEXPRESION;
+
+PATHEXPRESION:ddiagonal RUTARELATIVA 
+        |sdiagonal RUTARELATIVA
+        |ddiagonal
+        |sdiagonal
+        |RUTARELATIVA
+        ;
+
+//RUTA RELATIVA
+RUTARELATIVA:PASOEXPRESION RUTARELATIVAL1
+        |PASOEXPRESION
+        ;
+
+RUTARELATIVAL1:RUTARELATIVAL1 RUTARELATIVAL2
+        |RUTARELATIVAL2;
+
+RUTARELATIVAL2:sdiagonal PASOEXPRESION
+                |ddiagonal PASOEXPRESION
+                ;
+
+//PASO EXPRESION
+
+PASOEXPRESION:POSTEXPRESION
+        |AXISEXPRESION
+        ;
+
+//AXISEXPRESION
+
+AXISEXPRESION:REVERSOPASO PREDICADO //LISTADOPREDICADO
+        |DELANTEPASO PREDICADO // LISTADOPREDICADO
+        |REVERSOPASO //LISTADOPREDICADO
+        |DELANTEPASO  // LISTADOPREDICADO
+        ;
+//DELANTEPASO
+DELANTEPASO:DELANTEAXIS NODOPRUEBA
+        |ABREVIATURADESPUESPASO
+        ;
+//ABREVIATURADEPUES
+ABREVIATURADESPUESPASO:arroba NODOPRUEBA
+                |NODOPRUEBA
+                ;
+
+
+DELANTEAXIS: child ddospuntos
+        |descendant ddospuntos
+        |attribute ddospuntos
+        |self ddospuntos
+        |descendant_or_self ddospuntos
+        |following ddospuntos
+        |following_sibling ddospuntos
+        |namespace ddospuntos
+        ;
+
+NODOPRUEBA:PRIMERTEST
+        |NOMBRETEST
+        ;
+
+
+PRIMERTEST:METODONODO
+        |METODOTEXTO
+        |POSITION
+        |LAST;
+
+METODONODO: node lparen rparen;
+METODOTEXTO: text lparen rparen;
+POSITION:position lparen rparen;
+LAST:last lparen rparen;
+//NOMBRETEST:mul;
+
+//REVERSOPASO
+REVERSOPASO:REVERSOAXIS NODOPRUEBA
+        ;
+
+//REVERSOAXIS
+REVERSOAXIS: parent ddospuntos
+        |ancestor_or_self ddospuntos
+        |ancestor ddospuntos
+        |preceding_sibling ddospuntos
+        |preceding ddospuntos
+        ;
+
+//POSTEXPRESION
+POSTEXPRESION: EXPRESIONPRIMARIA PREDICADO
+        |EXPRESIONPRIMARIA
+        ;
+PREDICADO:lcorchete EXPR rcorchete;
+
+EXPRESIONPRIMARIA:LITERAL;
+
+LITERAL:DecimalLiteral
+        |IntegerLiteral
+        |StringLiteral
+        |CharLiteral{arreglolexico+=$1}
+        |arroba identifier
+        |identifier
+        |dpunto
+        |spunto
+        ;
+
+
+/* Definición de la gramática de Horacio */
+
+
+/*
+book/price// 
+
+
+
+XPATH:INSTRUCCIONES {console.log('1');};//
+
+INSTRUCCIONES:SENTENCIABARRA
+             |OTHER
+             ;
+SENTENCIABARRA:ddiagonal
+               |sdiagonal
+
+EXPR:ancestor;
+*/
+
+//-------------2

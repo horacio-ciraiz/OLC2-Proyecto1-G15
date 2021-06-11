@@ -22,10 +22,10 @@ stringdouble                        {escape}|{acceptedcharsdouble}
 stringliteral                       \"{stringdouble}*\"
 
 //Componentes del Char
-acceptedcharssingle                 [^\'\\]
+acceptedcharssingle                 [^\'\\]+
 stringsingle                        {escape}|{acceptedcharssingle}
 //CharFormal
-charliteral                         \'{stringsingle}\'
+charliteral                         \'{stringsingle}*\'
 //Digito
 digit                               [0-9]+ 
 
@@ -69,6 +69,7 @@ commentliteral                        \(\: {commentdouble} \:\)
 "+"                         return 'mas';
 "-"                         return 'menos';
 "*"                         return 'mul';
+
 "="                         return 'igual';
 "!="                        return 'diferente';
 "<"                         return 'menorq';
@@ -82,8 +83,8 @@ commentliteral                        \(\: {commentdouble} \:\)
 //----------Selectores-----------------
 "//"                         return 'ddiagonal'; //Probar Esto
 "/"                         return 'sdiagonal';
-"."                         return 'spunto';
 ".."                         return 'dpunto';
+"."                         return 'spunto';
 "@"                         return 'arroba';
 "::"                        return 'ddospuntos';
 
@@ -144,7 +145,7 @@ OREXPRESION: ANDEXPRESION OREXPRESIONL1
         |ANDEXPRESION;
 
 
-OREXPRESIONL1:OREXPRESIONL1 OREXPRESIONL2
+OREXPRESIONL1: OREXPRESIONL2 OREXPRESIONL1
                 |OREXPRESIONL2;
 
 OREXPRESIONL2: or_ ANDEXPRESION;
@@ -152,7 +153,7 @@ OREXPRESIONL2: or_ ANDEXPRESION;
 ANDEXPRESION:COMPARACIONEXPRESION ANDEXPRESIONL1
         |COMPARACIONEXPRESION
         ;
-ANDEXPRESIONL1: ANDEXPRESIONL1 ANDEXPRESIONL2
+ANDEXPRESIONL1:ANDEXPRESIONL2 ANDEXPRESIONL1 
         |ANDEXPRESIONL2;
 
 ANDEXPRESIONL2:and_ COMPARACIONEXPRESION;
@@ -178,7 +179,7 @@ STRINGCONCATENA:SUMAEXPRESION;
 SUMAEXPRESION:MULTIPLICACIONEXPRESION SUMAEXPRESIONL1
         |MULTIPLICACIONEXPRESION;
 
-SUMAEXPRESIONL1:SUMAEXPRESIONL1 SUMAEXPRESIONL2
+SUMAEXPRESIONL1: SUMAEXPRESIONL2 SUMAEXPRESIONL1
         |SUMAEXPRESIONL2
         ;
 SUMAEXPRESIONL2:mas MULTIPLICACIONEXPRESION
@@ -190,7 +191,7 @@ MULTIPLICACIONEXPRESION:UNIONEXPRESION MULTIPLICACIONEXPRESIONL1
                         |UNIONEXPRESION
                         ;
 
-MULTIPLICACIONEXPRESIONL1:MULTIPLICACIONEXPRESIONL1 MULTIPLICACIONEXPRESIONL2
+MULTIPLICACIONEXPRESIONL1:MULTIPLICACIONEXPRESIONL2 MULTIPLICACIONEXPRESIONL1 
                         |MULTIPLICACIONEXPRESIONL2;
 
 MULTIPLICACIONEXPRESIONL2: mul UNIONEXPRESION
@@ -228,7 +229,7 @@ RUTARELATIVA:PASOEXPRESION RUTARELATIVAL1
         |PASOEXPRESION
         ;
 
-RUTARELATIVAL1:RUTARELATIVAL1 RUTARELATIVAL2
+RUTARELATIVAL1: RUTARELATIVAL2 RUTARELATIVAL1
         |RUTARELATIVAL2;
 
 RUTARELATIVAL2:sdiagonal PASOEXPRESION
@@ -258,7 +259,7 @@ ABREVIATURADESPUESPASO:arroba NODOPRUEBA
                 ;
 
 
-DELANTEAXIS: child ddospuntos
+DELANTEAXIS: child ddospuntos 
         |descendant ddospuntos
         |attribute ddospuntos
         |self ddospuntos
@@ -270,20 +271,24 @@ DELANTEAXIS: child ddospuntos
 
 NODOPRUEBA:PRIMERTEST
         |NOMBRETEST
+}
         ;
 
 
 PRIMERTEST:METODONODO
-        |METODOTEXTO;
+        |METODOTEXTO
+        |POSITION
+        |LAST;
 
 METODONODO: node lparen rparen;
 METODOTEXTO: text lparen rparen;
+POSITION:position lparen rparen;
+LAST:last lparen rparen;
 
 //NOMBRETEST:mul;
 
 //REVERSOPASO
 REVERSOPASO:REVERSOAXIS NODOPRUEBA
-        |ABREVIATURAREVERSEPASO
         ;
 
 //REVERSOAXIS
@@ -293,8 +298,6 @@ REVERSOAXIS: parent ddospuntos
         |preceding_sibling ddospuntos
         |preceding ddospuntos
         ;
-//ABREVIATURAPASO
-ABREVIATURAREVERSEPASO:dpunto;
 
 //POSTEXPRESION
 POSTEXPRESION: EXPRESIONPRIMARIA PREDICADO
@@ -302,21 +305,19 @@ POSTEXPRESION: EXPRESIONPRIMARIA PREDICADO
         ;
 PREDICADO:lcorchete EXPR rcorchete;
 
-EXPRESIONPRIMARIA:LITERAL
-                |ITEMEXPRESION;
+EXPRESIONPRIMARIA:LITERAL;
 
-LITERAL:EXPRESIONSTRING
-        |EXPRESIONNUMERICA 
+LITERAL:DecimalLiteral
+        |IntegerLiteral
+        |StringLiteral
+        |CharLiteral{arreglolexico+=$1}
+        |arroba identifier
+        |identifier
+        |dpunto
+        |spunto
+        
         ;
 
-EXPRESIONNUMERICA:DecimalLiteral
-                |IntegerLiteral
-                ;
-EXPRESIONSTRING:StringLiteral
-                |CharLiteral
-                |identifier
-                ;
-ITEMEXPRESION:spunto;
 
 /* Definición de la gramática de Horacio */
 

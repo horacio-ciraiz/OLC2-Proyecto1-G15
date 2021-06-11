@@ -5,38 +5,40 @@
         <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
         <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
       
--->
+        -->      
+    <link href="https://allfont.es/allfont.css?fonts=courier-new-bold" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js"></script>
+        <link rel="stylesheet" href="./css/estilo.css" TYPE="text/css">
 
-        <link rel="stylesheet" href="estilo.css" TYPE="text/css">
-
-        <script  src="./accion.js"></script>
+        <script  src="./js/accion.js"></script>
         <script  src="../Analizador/XPath/Gramatica/gramatica.js"></script>
+        <script  src="../Analizador/XPath/Gramatica/gramaticadesc.js"></script>
+        
 
-        <!--
+        <!--Imports de Brandom-->
+        <script src="../Analizador/XML/dist/bundle.js"></script>    
+        
+        
         <script src="js/codemirror/lib/codemirror.js"></script>
         <link rel="stylesheet" href="js/codemirror/lib/codemirror.css">
 
-        <link rel="stylesheet" href="js/codemirror/theme/neo.css">
-
-        <script src="js/codemirror/mode/clike/clike.js"></script>    -->       <!--Java-->
-      <!--  <script src="js/codemirror/mode/javascript/javascript.js"></script> JavaScript-->
-        <!-- <script src="js/codemirror/mode/python/python.js"></script>        Python-->
+        <link rel="stylesheet" href="js/codemirror/theme/railscasts.css">
+        <link rel="stylesheet" href="js/codemirror/theme/seti.css">
+        <script src="js/codemirror/mode/xml/xml.js"></script>       
+        <script src="js/codemirror/mode/clike/clike.js"></script>    
+        
+         <!--  BUNDLE.JS -->
+         
     
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
- <!-- 
-        <script>
-            window.onload=function() {
-                document.getElementById("defaultOpen").click();
-            }
-            </script> -->
 	</head>
 	<body>
         <div class="PanelMenu">
             <table border=0 >
                 <tr>
-                    <td>
+                   <!-- <td>
                         <select name ="Menu" class="Menu" id="Menu" onchange="MetodoAbrir();">
                             <option value =" null " disabled selected selected="selected"> Menu</option>".
                             <Option value = "Menu_Abrir" id="open_file" type="file">Abrir</option>     
@@ -44,14 +46,14 @@
                             <Option value = "Menu_Analizar" id="analizar">Analizar</option>     
                             
                         </select>
-                    </td>
+                    </td>-->
                     <td >
                         <select name ="Menu_XML" class="Menu_XML" id="Menu_XML" onchange="MetodoXML();">
                             <Option value =" null " disabled selected  selected="selected">Opciones XML</option>".
-                                <Option value = "Menu_AbrirXml" >Abrir Xml</option>
-                                <Option value = "Menu_GuardarXml"id="save">Guardar Xml</option>     
-                                <Option value = "Menu_AscXml">Analizar Ascendente </option>
-                            <Option value = "Menu_DesXml" >Analizar Descendente</option>   
+                                <Option value = "Menu_AbrirXML" >Abrir Xml</option>
+                                <Option value = "Menu_GuardarXML"id="save">Guardar Xml</option>     
+                                <Option value = "Menu_AscXML">Analizar Ascendente </option>
+                            <Option value = "Menu_DesXmML" >Analizar Descendente</option>   
                         </select>
                     </td>
                     <td >
@@ -67,23 +69,74 @@
             </table>
         </div>
         <div class="Tablas">
-        <table>
+        <table border = 2>
             <tr>
-                <table border=0  class="tablaintro">
+                <table border=1  class="tablaintro" width=1250px align="center">
                     <tr>
                         <td>
                             <h3>Consola Entrada XML</h3>
                             <textarea Multiline="true"  name="EntradaXML"  id="EntradaXML" placeholder="Consola Entrada XML" class="entrada"></textarea>
+                            <script type="text/javascript">
+                                    var editorXML=CodeMirror.fromTextArea(
+                                     document.getElementById("EntradaXML"),{
+                                     theme:"railscasts",
+                                     lineNumbers:true,
+                                     mode: "text/xml",
+                                     scrollbarStyle:"native",
+              
+                                    });
+                                     editorXML.setSize("625px","300px");
+                        
+                            </script>
+                        
+                       
+                       
+                       
                         </td>
-                        <td>
+                        <td >
                             <h3>Consola Entrada XPath</h3>
                             <textarea Multiline="true"  name="EntradaXPath" id= "EntradaXPath" placeholder="Consola Entrada XPath"  class="entrada"></textarea>
+                            <script type="text/javascript">
+                                var editorXPath=CodeMirror.fromTextArea(
+                                 document.getElementById("EntradaXPath"),{
+                                 theme:"railscasts",
+                                 lineNumbers:true,
+                                 mode: "text/x-csrc",
+                                 scrollbarStyle:"native",
+                                   
+                                });
+                                 editorXPath.setSize("625px","300px");
+                    
+                        </script>
+                       
+                       
+                       
+                       
                         </td>
                     </tr>
+                    
                 </table>
             </tr>
             <tr>
+                <h3>Consola de Salida</h3>
+                    
                 <td><textarea id ="ConsolaSalida" name="ConsolaSalida"  readonly="readonly" Multiline="true" placeholder="Consola Salida" class="consola"></textarea></td> 
+                    
+            
+            <script type="text/javascript">
+                    var editorConsola=CodeMirror.fromTextArea(
+                     document.getElementById("ConsolaSalida"),{
+                     theme:"seti",
+                     lineNumbers:true,
+                     mode: "text/x-java",
+                     scrollbarStyle:"native",
+                     readOnly:true, 
+                    });
+                     editorConsola.setSize("100%","200px");
+        
+            </script>
+           
+
             </tr>
         </table>
     </div>

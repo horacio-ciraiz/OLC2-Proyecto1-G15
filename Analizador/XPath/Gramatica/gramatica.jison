@@ -22,10 +22,10 @@ stringdouble                        {escape}|{acceptedcharsdouble}
 stringliteral                       \"{stringdouble}*\"
 
 //Componentes del Char
-acceptedcharssingle                 [^\'\\]
+acceptedcharssingle                 [^\'\\]+
 stringsingle                        {escape}|{acceptedcharssingle}
 //CharFormal
-charliteral                         \'{stringsingle}\'
+charliteral                         \'{stringsingle}*\'
 //Digito
 digit                               [0-9]+ 
 
