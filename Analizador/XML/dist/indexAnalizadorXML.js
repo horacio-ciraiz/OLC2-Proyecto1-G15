@@ -1,11 +1,11 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var Entorno_1 = require("./Simbolo/Entorno");
 var Simbolo_1 = require("./Simbolo/Simbolo");
 var Tipo_1 = require("./Simbolo/Tipo");
 var gramatica = require('./GramaticaXML/gramaticaXMLASC');
 var entornoGlobal = new Entorno_1.Entorno(null);
 function AnalizarXMLASC(entrada) {
+    
     var objetos = gramatica.parse(entrada);
     var contadorGlobal = 0;
     var contadorObjeto = 0;
@@ -23,6 +23,7 @@ function AnalizarXMLASC(entrada) {
         contadorGlobal++;
     });
     PintarTablasSimbolos();
+    return entornoGlobal;
 }
 function AgregarEntornoAtributo(objeto, entornoObjeto, contador) {
     objeto.listaAtributos.forEach(function (atributo) {
@@ -81,4 +82,3 @@ function PintarEntorno(entornoObjeto, ambito) {
         contadorPintar++;
     }
 }
-AnalizarXMLASC(" \n<!-- DATOS XML -->\n<biblioteca>\n  <libro>\n  <titulo>La vida esta en otra parte</titulo>\n    <autor>Milan Kundera</autor>\n    <fechaPublicacion a\u00F1o=\"1973\"/>\n  </libro>\n  <libro>\n    <titulo>Pantaleon y las visitadoras</titulo>\n    <autor fechaNacimiento=\"28/03/1936\">Mario Vargas Llosa</autor>\n    <fechaPublicacion a\u00F1o=\"1973\"/>\n  </libro>\n  <libro>\n    <titulo>Conversacion en la catedral</titulo>\n    <autor fechaNacimiento=\"28/03/1936\">Mario Vargas Llosa</autor>\n    <fechaPublicacion a\u00F1o=\"1969\"/>\n  </libro>\n</biblioteca>\n");
