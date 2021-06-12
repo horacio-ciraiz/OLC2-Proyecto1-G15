@@ -5,25 +5,37 @@ var Tipo_1 = require("./Simbolo/Tipo");
 var gramatica = require('./GramaticaXML/gramaticaXMLASC');
 var entornoGlobal = new Entorno_1.Entorno(null);
 function AnalizarXMLASC(entrada) {
-    
-    var objetos = gramatica.parse(entrada);
+    var objetoparse = gramatica.parse(entrada);
     var contadorGlobal = 0;
     var contadorObjeto = 0;
-    objetos.forEach(function (element) {
-        var entornoObjeto = new Entorno_1.Entorno(null);
-        contadorObjeto = 0;
-        if (element.listaAtributos.length > 0) {
-            AgregarEntornoAtributo(element, entornoObjeto, contadorObjeto);
-        }
-        if (element.listaObjetos.length > 0) {
-            AgregarEntornoObjeto(element, entornoObjeto, contadorObjeto);
-        }
-        var simbolo = new Simbolo_1.Simbolo(Tipo_1.Tipo.OBJETO, element.identificador, element.texto, element.fila, element.columna, entornoObjeto);
-        entornoGlobal.agregar(String(contadorGlobal), simbolo);
-        contadorGlobal++;
-    });
-    PintarTablasSimbolos();
-    return entornoGlobal;
+    var objetos = objetoparse.objetos;
+    var ecoding = objetoparse.ecoding.replace(/['"]+/g, '');
+    var ReporteGr = objetoparse.listaRG;
+    var Errores = objetoparse.errores;
+    console.log("EL ECODING ES -> " + ecoding);
+    console.log("** ERRORES: \n");
+    console.log(Errores);
+    //console.log(objetoparse);
+    var splitted = ""; // str.split(" ", 3)
+    console.log("\n\nProducciones         Reglas Semanticas");
+    for (var i = 0; i < ReporteGr.length; i++) {
+        splitted = ReporteGr[i].split(",");
+        console.log(String(i) + ")" + splitted[0] + "         " + splitted[1]);
+    }
+    // objetos.forEach((element:Objeto) => {
+    //     const entornoObjeto:Entorno = new Entorno(null);
+    //     contadorObjeto = 0;
+    //     if (element.listaAtributos.length > 0) {
+    //         AgregarEntornoAtributo(element, entornoObjeto, contadorObjeto);
+    //     }
+    //     if (element.listaObjetos.length > 0) {
+    //         AgregarEntornoObjeto(element, entornoObjeto, contadorObjeto);
+    //     } 
+    //     const simbolo:Simbolo = new Simbolo(Tipo.OBJETO, element.identificador,element.texto,element.fila, element.columna, entornoObjeto);
+    //     entornoGlobal.agregar(String(contadorGlobal), simbolo);
+    //     contadorGlobal++;
+    // });
+    // PintarTablasSimbolos();
 }
 function AgregarEntornoAtributo(objeto, entornoObjeto, contador) {
     objeto.listaAtributos.forEach(function (atributo) {
@@ -82,3 +94,25 @@ function PintarEntorno(entornoObjeto, ambito) {
         contadorPintar++;
     }
 }
+AnalizarXMLASC(" \n    <?xml version=\"1.0\" encoding=\"UTF-8\"?>\n    <fechaPublicacion a\u00F1o=\"1973\"/>\n");
+module.exports = { analizarXML: AnalizarXMLASC };
+// AnalizarXMLASC(` 
+// <?xml version="1.0" encoding="UTF-8"?>
+// <biblioteca>
+//   <libro>
+//     <titulo>La vida esta en otra parte</titulo>
+//     <autor>Milan Kundera</autor>
+//     <fechaPublicacion año="1973"/>
+//   </libro>
+//   <libro>
+//     <titulo>Pantaleon y las visitadoras</titulo>
+//     <autor fechaNacimiento="28/03/1936">Mario Vargas Llosa</autor>
+//     <fechaPublicacion año="1973"/>
+//   </libro>
+//   <libro>
+//     <titulo>Conversacion en la catedral</titulo>
+//     <autor fechaNacimiento="28/03/1936">Mario Vargas Llosa</autor>
+//     <fechaPublicacion año="1969"/>
+//   </libro>
+// </biblioteca>
+// `);

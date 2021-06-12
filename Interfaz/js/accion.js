@@ -1,4 +1,6 @@
-const { loadavg } = require("os");
+var bundles = require("../../Analizador/XML/dist/bundle");
+
+var analizador = require("../../Analizador/XML/dist/indexAnalizadorXML");
 
 function MetodoXPath() {
     try {
@@ -118,9 +120,17 @@ function MetodoXML() {
         if(texto==""){
           alert("Debe Abrir un Archivo Xpath");
         }else{
-          alert(texto);
+          //alert(texto);
+
+          console.log("inicia");
           
-          var content= 
+          var content = analizador.AnalizadorXMLASC("<s>asd</s>")
+          
+         // var content = require("../../Analizador/XML/dist/indexAnalizadorXML") // bundles.function(5);//AnalizarXMLASC('<libro>asdasd</libro>');
+
+          console.log(content);
+
+          console.log("fin");
           
           alert(recibido);
           alert("Analisis Desc Terminado")
