@@ -1,3 +1,4 @@
+//const { ENETUNREACH } = require("node:constants");
 
 function MetodoXPath() {
     try {
@@ -51,10 +52,12 @@ function MetodoXPath() {
           alert("Debe Abrir un Archivo Xpath");
         }else{
   
-          var objetos = gramatica.parse(texto);
+          var objetos = gramatica.parse(texto); 
           alert(objetos.codigo);
           alert("Analisis Terminado")
+          
           document.getElementById("ConsolaSalida").value =objetos.codigo;
+
           
         }
        
@@ -67,7 +70,7 @@ function MetodoXPath() {
     
       }
     } catch (error) {
-      
+      console.log(error);
     }
 
     document.getElementById("Menu_XPath").selectedIndex = 0;
